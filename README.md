@@ -1,2 +1,2 @@
-# App-v1-boat-backend、
+# App-v1-boat-backend
 backend for rowing project
