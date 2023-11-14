@@ -1,6 +1,6 @@
 package com.ecust.appv1boatbackend.Repository;
 
-import com.ecust.appv1boatbackend.model.POJO.Food;
+import com.ecust.appv1boatbackend.model.pojo.Food;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

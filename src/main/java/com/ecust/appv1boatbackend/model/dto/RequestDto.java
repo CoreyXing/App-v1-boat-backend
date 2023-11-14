@@ -1,4 +1,4 @@
-package com.ecust.appv1boatbackend.model.DTO;
+package com.ecust.appv1boatbackend.model.dto;
 
 public class RequestDto {
     private String firstClass;

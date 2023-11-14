@@ -1,7 +1,7 @@
 package com.ecust.appv1boatbackend.controller;
 
-import com.ecust.appv1boatbackend.model.DTO.RequestDto;
-import com.ecust.appv1boatbackend.model.POJO.Food;
+import com.ecust.appv1boatbackend.model.dto.RequestDto;
+import com.ecust.appv1boatbackend.model.pojo.Food;
 import com.ecust.appv1boatbackend.service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

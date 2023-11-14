@@ -1,7 +1,7 @@
 package com.ecust.appv1boatbackend.service;
 
 import com.ecust.appv1boatbackend.Repository.FoodRepository;
-import com.ecust.appv1boatbackend.model.POJO.Food;
+import com.ecust.appv1boatbackend.model.pojo.Food;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

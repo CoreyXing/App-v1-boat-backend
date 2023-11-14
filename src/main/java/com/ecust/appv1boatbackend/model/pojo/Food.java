@@ -1,4 +1,4 @@
-package com.ecust.appv1boatbackend.model.POJO;
+package com.ecust.appv1boatbackend.model.pojo;
 
 
 import lombok.Data;
