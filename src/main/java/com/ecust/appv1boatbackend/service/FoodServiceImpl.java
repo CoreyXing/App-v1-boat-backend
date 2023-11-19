@@ -1,10 +1,9 @@
 package com.ecust.appv1boatbackend.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ecust.appv1boatbackend.bo.GetFoodByIdBO;
 import com.ecust.appv1boatbackend.mapper.FoodMapper;
 import com.ecust.appv1boatbackend.model.pojo.Food;
-import com.ecust.appv1boatbackend.vo.FoodQueryVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +13,14 @@ public class FoodServiceImpl extends ServiceImpl<FoodMapper, Food> implements Fo
 
     private FoodMapper foodMapper;
     @Override
-    public FoodQueryVo getFoodById(GetFoodByIdBO getFoodByIdBO) {
-        return foodMapper.getFoodById(getFoodByIdBO.getId());
+    public Food getFoodById(int id) {
+        return foodMapper.selectById(id);
 
     }
 
     @Override
-    public List<FoodQueryVo> getAllFoods() {
-        return foodMapper.getAllFood();
+    public List<Food> getAllFoods() {
+        return foodMapper.selectList(new QueryWrapper<>());
     }
 }
 
