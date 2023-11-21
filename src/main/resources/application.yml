@@ -1,0 +1,14 @@
+server:
+  port: 8083
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  freemarker:
+    suffix: .ftl
+    charset: UTF-8
+    content-type: text/html
+  data:
+    neo4j:
+      username: neo4j
+      password: 12345678
+
