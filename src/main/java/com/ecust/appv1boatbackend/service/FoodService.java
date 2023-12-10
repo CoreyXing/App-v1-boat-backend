@@ -5,6 +5,8 @@ import com.ecust.appv1boatbackend.model.pojo.Food;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class FoodService {
@@ -37,4 +39,15 @@ public class FoodService {
     public List<Food> getFoodsByClass(String firstClass, String secondClass) {
         return foodRepository.getFoodsByClass(firstClass, secondClass);
     }
+
+    public Set<String> getSecondClassByFirstClass(String firstClass){
+        List<Food> foods = foodRepository.getFoodsByFirstClass(firstClass);
+        return foods.stream().map(food -> food.getSecondClass()).collect(Collectors.toSet());
+    }
+
+    public List<Food> getFoodsByName(String name){
+        return foodRepository.getFoodsByName(name);
+    }
+
+
 }

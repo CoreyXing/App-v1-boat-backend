@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class FoodRepository {
@@ -32,6 +33,11 @@ public class FoodRepository {
         return jdbcTemplate.query(sql, new Object[]{firstClass, secondClass}, new FoodRowMapper());
     }
 
+    public List<Food> getFoodsByName(String name) {
+        String sql = "SELECT * FROM foods WHERE food_name = ?";
+        return jdbcTemplate.query(sql, new Object[]{name}, new FoodRowMapper());
+    }
+
     public void createFood(Food food) {
         String sql = "INSERT INTO foods (first_class, second_class, food_name, jibenyingyang, gongxiao, zhilei, kuangwuzhi, weishengsu) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -50,6 +56,23 @@ public class FoodRepository {
     public void deleteFood(int id) {
         String sql = "DELETE FROM foods WHERE id = ?";
         jdbcTemplate.update(sql, id);
+    }
+
+
+    /**
+     * 根据第一类名称获取第二类的名称
+     */
+    public List<String> getSecondClassByFirstClass(String firstClass) {
+        String sql = "SELECT * FROM foods WHERE first_class = ?";
+        List<Food> foodResultList = jdbcTemplate.query(sql, new Object[] {firstClass}, new FoodRowMapper());
+        return foodResultList.stream().map(Food::getSecondClass).collect(Collectors.toList());
+    }
+
+    public List<Food> getFoodsByFirstClass(String firstClass) {
+        String sql = "SELECT * FROM foods WHERE first_class = ?";
+        List<Food> foodResultList = jdbcTemplate.query(sql, new Object[] {firstClass}, new FoodRowMapper());
+        return  foodResultList;
+
     }
 
     private static class FoodRowMapper implements RowMapper<Food> {

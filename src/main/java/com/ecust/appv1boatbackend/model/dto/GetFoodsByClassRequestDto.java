@@ -1,6 +1,6 @@
 package com.ecust.appv1boatbackend.model.dto;
 
-public class RequestDto {
+public class GetFoodsByClassRequestDto {
     private String firstClass;
     private String secondClass;
 
