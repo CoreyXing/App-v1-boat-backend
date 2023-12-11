@@ -45,6 +45,11 @@ public class FoodService {
         return foods.stream().map(food -> food.getSecondClass()).collect(Collectors.toSet());
     }
 
+    public Set<String> getAllFirstClass(){
+        List<Food> foods = foodRepository.getAllFoods();
+        return foods.stream().map(food -> food.getFirstClass()).collect(Collectors.toSet());
+    }
+
     public List<Food> getFoodsByName(String name){
         return foodRepository.getFoodsByName(name);
     }

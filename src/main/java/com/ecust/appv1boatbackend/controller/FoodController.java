@@ -1,6 +1,5 @@
 package com.ecust.appv1boatbackend.controller;
 
-import com.ecust.appv1boatbackend.model.dto.GetFoodsByClassRequestDto;
 import com.ecust.appv1boatbackend.model.pojo.Food;
 import com.ecust.appv1boatbackend.service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/foods")
+@RequestMapping("/api/foods")
 public class FoodController {
     private final FoodService foodService;
 
@@ -45,11 +44,10 @@ public class FoodController {
         foodService.deleteFood(id);
     }
 
-    @PostMapping("/search")
-    public List<Food> getFoodsByClass(@RequestBody GetFoodsByClassRequestDto requestDto) {
-        String firstClass = requestDto.getFirstClass();
-        String secondClass = requestDto.getSecondClass();
-        return foodService.getFoodsByClass(firstClass, secondClass);
+    @GetMapping("/getbyclass")
+    public List<Food> getFoodsByClass(@RequestParam String firstclass,
+                                      @RequestParam String secondclass) {
+        return foodService.getFoodsByClass(firstclass, secondclass);
     }
 
     @GetMapping("/getbyname/{name}")
@@ -57,8 +55,14 @@ public class FoodController {
         return foodService.getFoodsByName(name);
     }
 
-    @GetMapping  ("/getsecondclass/{firstClass}")
-    public Set<String> getSecondClassByFirstClass(@PathVariable String firstClass){
-        return foodService.getSecondClassByFirstClass(firstClass);
+    @GetMapping  ("/secondclass")
+    public Set<String> getSecondClassByFirstClass(@RequestParam String firstclass){
+        return foodService.getSecondClassByFirstClass(firstclass);
     }
+
+    @GetMapping("/firstclass")
+    public Set<String> getAllFirstClass(){
+        return foodService.getAllFirstClass();
+    }
+
 }
