@@ -3,6 +3,7 @@ package com.ecust.appv1boatbackend.Repository.impl;
 
 import com.ecust.appv1boatbackend.Repository.DishRepository;
 import com.ecust.appv1boatbackend.model.pojo.Dish;
+import com.ecust.appv1boatbackend.model.pojo.IngredientUnit;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -33,6 +34,13 @@ public class DishRepositoryImpl implements DishRepository {
     public List<Dish> getDishByKeyWords(String key) {
         String sql = "SELECT * FROM dishes WHERE name LIKE ?";
         return jdbcTemplate.query(sql, new DishRowMapper(), "%" + key + "%");
+    }
+
+    @Override
+    public String getMainUnitById(String id) {
+        String sql = "SELECT main_unit FROM dishes WHERE id = ?";
+        String jsonStr = jdbcTemplate.queryForObject(sql,String.class,id);
+        return jsonStr;
     }
 
     private static class DishRowMapper implements RowMapper<Dish> {

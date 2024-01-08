@@ -3,6 +3,7 @@ package com.ecust.appv1boatbackend.controller;
 
 import com.ecust.appv1boatbackend.model.dto.FuzzyQueryByNameResponseDTO;
 import com.ecust.appv1boatbackend.model.pojo.Dish;
+import com.ecust.appv1boatbackend.model.pojo.IngredientUnit;
 import com.ecust.appv1boatbackend.service.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +47,15 @@ public class DishController {
         return ResponseEntity.ok(dish);
 
     }
+
+    @GetMapping("/unit")
+    public ResponseEntity<IngredientUnit> getDishMainUnitById(
+            @RequestParam String id
+    ) {
+        IngredientUnit unit = dishService.getMainUnitById(id);
+        return ResponseEntity.ok(unit);
+
+    }
+
 
 }
