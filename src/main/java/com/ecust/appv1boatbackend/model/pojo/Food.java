@@ -1,14 +1,18 @@
 package com.ecust.appv1boatbackend.model.pojo;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * 实物实体类
+ * 食物实体类
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Food {
-    private Integer id;
+    private String id;
     private String firstClass;
     private String secondClass;
     private String foodName;

@@ -1,19 +1,15 @@
 # This is the bare minimum of what you need to connect to a Neo4j instance.
 spring:
   neo4j:
-    uri: bolt://172.20.137.141:7474
+    uri: bolt://127.0.0.1:7474
     authentication:
       username: neo4j
       password: 123456
 mysql:
   authentication:
-    firsturl: jdbc:mysql://172.20.137.141:3306/boot
-    secondurl: jdbc:mysql://172.20.137.141:3306/persona_test
+    firsturl: jdbc:mysql://127.0.0.1:3306/boot
+    secondurl: jdbc:mysql://127.0.0.1:3306/persona_test
     driverClassName: com.mysql.cj.jdbc.Driver
     userName: root
     password: 123456
-
-
-
-
 
