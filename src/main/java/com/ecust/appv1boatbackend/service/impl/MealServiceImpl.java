@@ -4,7 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ecust.appv1boatbackend.Repository.DishRepository;
 import com.ecust.appv1boatbackend.Repository.MealRepository;
-import com.ecust.appv1boatbackend.model.dto.Meal;
+import com.ecust.appv1boatbackend.model.dto.MealInfoDTO;
+import com.ecust.appv1boatbackend.model.pojo.Meal;
 import com.ecust.appv1boatbackend.model.pojo.Ingredient;
 import com.ecust.appv1boatbackend.service.MealService;
 import com.google.common.base.Strings;
@@ -40,6 +41,7 @@ public class MealServiceImpl implements MealService {
         meals.forEach(meal -> {
             ingredientsAllMealOneDay.addAll(processMeal(meal));
         });
+
         Ingredient ingredientnSum = new
                 Ingredient("0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
         ingredientsAllMealOneDay.forEach(ingredient -> {
@@ -61,6 +63,24 @@ public class MealServiceImpl implements MealService {
             ingredientnSum.setAsh(sumStringUseNumberAlgorithm(ingredient.getAsh(), ingredientnSum.getAsh()));
         });
         return ingredientnSum;
+    }
+
+    @Override
+    public List<Meal> queryMealInfo(String userId, String date) {
+        //1.查询到 dish_id 根据日期和用户id
+        List<Meal> meals = mealRepository.queryMealByUserIdAndDate(userId, date);
+        //2.修改其中的dish_id的key，将其转换成真实的菜名
+        JSONObject object = new JSONObject();//改变后的jsonobject
+        meals.forEach(meal -> {
+            JSONObject jsonObject = JSONObject.parseObject(meal.getDishIds());
+            for (String key:jsonObject.keySet()) {
+                String modifyKey = dishRepository.getDishNameById(key);
+                String val = jsonObject.getString(key);
+                object.put(modifyKey,val);
+            }
+            meal.setDishIds(object.toJSONString());
+        });
+        return meals;
     }
 
     private String sumStringUseNumberAlgorithm(String var1, String var2) {

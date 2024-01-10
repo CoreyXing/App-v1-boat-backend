@@ -2,7 +2,7 @@ package com.ecust.appv1boatbackend.controller;
 
 import com.ecust.appv1boatbackend.Exception.LoginFailedException;
 import com.ecust.appv1boatbackend.model.dto.UserLoginDTO;
-import com.ecust.appv1boatbackend.model.pojo.TokenInfoDTO;
+import com.ecust.appv1boatbackend.model.dto.TokenInfoDTO;
 import com.ecust.appv1boatbackend.model.pojo.User;
 import com.ecust.appv1boatbackend.service.UserLoginService;
 import com.google.common.base.Strings;

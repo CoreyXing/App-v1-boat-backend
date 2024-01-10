@@ -31,6 +31,12 @@ public class DishRepositoryImpl implements DishRepository {
         return jdbcTemplate.queryForObject(sql, new DishRowMapper(), id);
     }
 
+    @Override
+    public String getDishNameById(String id) {
+        String sql = "SELECT name FROM dishes WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql,String.class,id);
+    }
+
     public List<Dish> getDishByKeyWords(String key) {
         String sql = "SELECT * FROM dishes WHERE name LIKE ?";
         return jdbcTemplate.query(sql, new DishRowMapper(), "%" + key + "%");

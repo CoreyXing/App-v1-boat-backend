@@ -1,6 +1,6 @@
 package com.ecust.appv1boatbackend.Repository;
 
-import com.ecust.appv1boatbackend.model.dto.Meal;
+import com.ecust.appv1boatbackend.model.pojo.Meal;
 
 import java.util.List;
 

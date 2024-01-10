@@ -10,6 +10,8 @@ public interface DishRepository {
 
     Dish getDishById(String id);
 
+    String getDishNameById(String id);
+
     List<Dish> getDishByKeyWords(String keyWord);
 
     String getMainUnitById(String id);
