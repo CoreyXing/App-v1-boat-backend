@@ -8,20 +8,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 
 
 
-@Configuration
-public class AppConfigurer extends WebMvcConfigurationSupport {
-    @Autowired
-    private UserInfoInterceptor userInfoInterceptor;
-
-    /**
-     * 拦截器，将用户信息放入threadLocal
-     *
-     * @param registry
-     */
-    @Override
-    protected void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(this.userInfoInterceptor).addPathPatterns("/api/**").excludePathPatterns("/api/login/*");
-        super.addInterceptors(registry);
-    }
-
-}
+//@Configuration
+//public class AppConfigurer extends WebMvcConfigurationSupport {
+//    @Autowired
+//    private UserInfoInterceptor userInfoInterceptor;
+//
+//    /**
+//     * 拦截器，将用户信息放入threadLocal
+//     *
+//     * @param registry
+//     */
+//    @Override
+//    protected void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(this.userInfoInterceptor).addPathPatterns("/api/**").excludePathPatterns("/api/login/*");
+//        super.addInterceptors(registry);
+//    }
+//
+//}
