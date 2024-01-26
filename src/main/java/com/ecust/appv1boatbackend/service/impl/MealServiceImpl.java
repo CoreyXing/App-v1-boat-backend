@@ -4,9 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ecust.appv1boatbackend.Repository.DishRepository;
 import com.ecust.appv1boatbackend.Repository.MealRepository;
-import com.ecust.appv1boatbackend.model.dto.MealInfoDTO;
-import com.ecust.appv1boatbackend.model.pojo.Meal;
-import com.ecust.appv1boatbackend.model.pojo.Ingredient;
+import com.ecust.appv1boatbackend.model.dto.IngredientAndNutrientyDTO;
+import com.ecust.appv1boatbackend.model.pojo.*;
 import com.ecust.appv1boatbackend.service.MealService;
 import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,19 +28,40 @@ public class MealServiceImpl implements MealService {
     public void receiveMeal(Meal meal) {
         String id = meal.getId();
         String userId = meal.getUserId();
-        String dishStr = meal.getDishIds();
+        List<MealDishInfo> mealDishInfos = meal.getDishIds();
+        String dishIds = JSON.toJSONString(mealDishInfos);
         String date = meal.getDate();
-        mealRepository.insertMeal(id, userId, dishStr, date);
+        mealRepository.insertMeal(id, userId,dishIds , date);
     }
 
     @Override
-    public Ingredient getIngredientByUserIdAndDate(String userId, String date) {
+    public IngredientAndNutrientyDTO getIngredientAndNutrientyUserIdAndDate(String userId, String date) {
         List<Meal> meals = mealRepository.queryMealByUserIdAndDate(userId, date);
         List<Ingredient> ingredientsAllMealOneDay = new ArrayList<>();
+        List<NutrientValues> nutrientValuesAllMealOneDay = new ArrayList<>();
         meals.forEach(meal -> {
-            ingredientsAllMealOneDay.addAll(processMeal(meal));
+            ingredientsAllMealOneDay.addAll(processMealForIngredient(meal));
+            nutrientValuesAllMealOneDay.addAll(processMealForNutrient(meal));
         });
-
+        NutrientValues nutrientValuesSum = new NutrientValues("0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0");
+        nutrientValuesAllMealOneDay.forEach(nutrientValues -> {
+            nutrientValuesSum.setCholine(sumStringUseNumberAlgorithm(nutrientValues.getCholine(),nutrientValuesSum.getCholine()));
+            nutrientValuesSum.setBiotin(sumStringUseNumberAlgorithm(nutrientValues.getBiotin(),nutrientValuesSum.getBiotin()));
+            nutrientValuesSum.setFolate(sumStringUseNumberAlgorithm(nutrientValues.getFolate(),nutrientValuesSum.getFolate()));
+            nutrientValuesSum.setNiacin(sumStringUseNumberAlgorithm(nutrientValues.getNiacin(),nutrientValuesSum.getNiacin()));
+            nutrientValuesSum.setRetinol(sumStringUseNumberAlgorithm(nutrientValues.getBetaCarotene(),nutrientValuesSum.getRetinol()));
+            nutrientValuesSum.setBetaCarotene(sumStringUseNumberAlgorithm(nutrientValues.getBetaCarotene(),nutrientValuesSum.getBetaCarotene()));
+            nutrientValuesSum.setVitaminA(sumStringUseNumberAlgorithm(nutrientValues.getVitaminA(),nutrientValuesSum.getVitaminA()));
+            nutrientValuesSum.setPantothenicAcid(sumStringUseNumberAlgorithm(nutrientValues.getPantothenicAcid(),nutrientValuesSum.getPantothenicAcid()));
+            nutrientValuesSum.setVitaminC(sumStringUseNumberAlgorithm(nutrientValues.getVitaminC(),nutrientValuesSum.getVitaminC()));
+            nutrientValuesSum.setVitaminB1(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB1(),nutrientValuesSum.getVitaminB1()));
+            nutrientValuesSum.setVitaminB2(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB2(),nutrientValuesSum.getVitaminB2()));
+            nutrientValuesSum.setVitaminB6(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB6(),nutrientValuesSum.getVitaminB6()));
+            nutrientValuesSum.setVitaminB12(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB12(),nutrientValuesSum.getVitaminB12()));
+            nutrientValuesSum.setVitaminD(sumStringUseNumberAlgorithm(nutrientValues.getVitaminD(),nutrientValuesSum.getVitaminD()));
+            nutrientValuesSum.setVitaminE(sumStringUseNumberAlgorithm(nutrientValues.getVitaminK(),nutrientValuesSum.getVitaminK()));
+            nutrientValuesSum.setVitaminK(sumStringUseNumberAlgorithm(nutrientValues.getVitaminE(),nutrientValuesSum.getVitaminE()));
+        });
         Ingredient ingredientnSum = new
                 Ingredient("0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
         ingredientsAllMealOneDay.forEach(ingredient -> {
@@ -62,7 +82,7 @@ public class MealServiceImpl implements MealService {
             ingredientnSum.setPurine(sumStringUseNumberAlgorithm(ingredient.getPurine(), ingredientnSum.getPurine()));
             ingredientnSum.setAsh(sumStringUseNumberAlgorithm(ingredient.getAsh(), ingredientnSum.getAsh()));
         });
-        return ingredientnSum;
+        return new IngredientAndNutrientyDTO(ingredientnSum,nutrientValuesSum);
     }
 
     @Override
@@ -70,15 +90,11 @@ public class MealServiceImpl implements MealService {
         //1.查询到 dish_id 根据日期和用户id
         List<Meal> meals = mealRepository.queryMealByUserIdAndDate(userId, date);
         //2.修改其中的dish_id的key，将其转换成真实的菜名
-        JSONObject object = new JSONObject();//改变后的jsonobject
         meals.forEach(meal -> {
-            JSONObject jsonObject = JSONObject.parseObject(meal.getDishIds());
-            for (String key:jsonObject.keySet()) {
-                String modifyKey = dishRepository.getDishNameById(key);
-                String val = jsonObject.getString(key);
-                object.put(modifyKey,val);
-            }
-            meal.setDishIds(object.toJSONString());
+            meal.getDishIds().forEach(mealDishInfo -> {
+                String dishName = dishRepository.getDishNameById(mealDishInfo.getDishId());
+                mealDishInfo.setDishId(dishName);
+            });
         });
         return meals;
     }
@@ -90,18 +106,33 @@ public class MealServiceImpl implements MealService {
         return decimalResultAsString;
     }
 
-    private List<Ingredient> processMeal(Meal meal) {
+    private List<Ingredient> processMealForIngredient(Meal meal) {
         List<Ingredient> ingredients = new ArrayList<>();
-        String jsonStr = meal.getDishIds();
-        JSONObject jsonObject = JSON.parseObject(jsonStr);
-        for (String key : jsonObject.keySet()) {
-            String mainIngredient = dishRepository.getDishById(key).getMainIngredient();
+        List<MealDishInfo> dishIds = meal.getDishIds();
+        dishIds.forEach(dishId ->{
+            Dish dish = dishRepository.getDishById(dishId.getDishId());
+            String mainIngredient = dish.getMainIngredient();
             Ingredient ingredient = JSONObject.parseObject(mainIngredient, Ingredient.class);
-            Integer num = jsonObject.getInteger(key);
-            for (int i = 0; i < num; i++) {
+            Integer num = Integer.parseInt(dishId.getNum());
+            for(int i=0;i<num;i++){
                 ingredients.add(ingredient);
             }
-        }
+        });
         return ingredients;
+    }
+
+    private List<NutrientValues> processMealForNutrient(Meal meal){
+        List<NutrientValues> nutrientValues = new ArrayList<>();
+        List<MealDishInfo> dishIds = meal.getDishIds();
+        dishIds.forEach(dishId ->{
+            Dish dish = dishRepository.getDishById(dishId.getDishId());
+            String vitaminIngredient = dish.getVitaminIngredient();
+            NutrientValues nutrient = JSONObject.parseObject(vitaminIngredient, NutrientValues.class);
+            int num = Integer.parseInt(dishId.getNum());
+            for (int i = 0; i < num; i++) {
+                nutrientValues.add(nutrient);
+            }
+        });
+        return nutrientValues;
     }
 }

@@ -1,7 +1,9 @@
 package com.ecust.appv1boatbackend.Repository.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.ecust.appv1boatbackend.Repository.MealRepository;
 import com.ecust.appv1boatbackend.model.pojo.Meal;
+import com.ecust.appv1boatbackend.model.pojo.MealDishInfo;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -39,7 +41,9 @@ public class MealRepositoryImpl implements MealRepository {
             Meal meal = new Meal();
             meal.setId(rs.getString("id"));
             meal.setUserId(rs.getString("user_id"));
-            meal.setDishIds(rs.getString("dish_id"));
+            String dishIdString = rs.getString("dish_id");
+            List<MealDishInfo> mealDishInfos = JSON.parseArray(dishIdString, MealDishInfo.class);
+            meal.setDishIds(mealDishInfos);
             meal.setDate(rs.getString("date"));
             return meal;
         }

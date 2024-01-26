@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Ingredient {
+public class  Ingredient {
     @JSONField(name = "热量")
     private String calories;
     @JSONField(name = "蛋白质")
