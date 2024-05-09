@@ -8,7 +8,8 @@ import com.ecust.appv1boatbackend.model.pojo.Ingredient;
 import java.util.List;
 
 public interface MealService {
-    void receiveMeal(Meal meal);
+
+    IngredientAndNutrientyDTO receiveMeal(Meal meal);
 
 
     IngredientAndNutrientyDTO getIngredientAndNutrientyUserIdAndDate(String userId, String date);

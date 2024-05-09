@@ -1,13 +1,11 @@
 package com.ecust.appv1boatbackend.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.ecust.appv1boatbackend.model.dto.IngredientAndNutrientyDTO;
 import com.ecust.appv1boatbackend.model.dto.MealInfoDTO;
 import com.ecust.appv1boatbackend.model.dto.QueryMealInfoRequestDTO;
 import com.ecust.appv1boatbackend.model.pojo.Meal;
 import com.ecust.appv1boatbackend.model.dto.QueryIngredientDTO;
-import com.ecust.appv1boatbackend.model.pojo.Ingredient;
 import com.ecust.appv1boatbackend.model.pojo.MealDishInfo;
 import com.ecust.appv1boatbackend.service.MealService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +28,9 @@ public class MealController {
 
 
     @PostMapping("/accept")
-    public ResponseEntity<Void> writeServiceForMeal(@RequestBody Meal meal){
-        mealService.receiveMeal(meal);
-        return ResponseEntity.ok().body(null);
+    public ResponseEntity<IngredientAndNutrientyDTO> writeServiceForMeal(@RequestBody Meal meal){
+        IngredientAndNutrientyDTO ingredientAndNutrientyDTO = mealService.receiveMeal(meal);
+        return ResponseEntity.ok().body(ingredientAndNutrientyDTO);
     }
     @PostMapping("/dish")
     public  ResponseEntity<MealInfoDTO> queryMealInfoByUserIdAndDate(

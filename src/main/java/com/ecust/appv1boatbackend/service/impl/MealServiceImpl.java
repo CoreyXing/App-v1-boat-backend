@@ -25,13 +25,18 @@ public class MealServiceImpl implements MealService {
     private DishRepository dishRepository;
 
     @Override
-    public void receiveMeal(Meal meal) {
+    public IngredientAndNutrientyDTO receiveMeal(Meal meal) {
         String id = meal.getId();
         String userId = meal.getUserId();
         List<MealDishInfo> mealDishInfos = meal.getDishIds();
         String dishIds = JSON.toJSONString(mealDishInfos);
         String date = meal.getDate();
         mealRepository.insertMeal(id, userId,dishIds , date);
+        List<NutrientValues> nutrientValuesOneMeal = processMealForNutrient(meal);
+        List<Ingredient> ingredientsOneMeal = processMealForIngredient(meal);
+        NutrientValues values = addAllMealNutrientValues(nutrientValuesOneMeal);
+        Ingredient ingredient = addAllMealIngredient(ingredientsOneMeal);
+        return new IngredientAndNutrientyDTO(ingredient,values);
     }
 
     @Override
@@ -43,28 +48,15 @@ public class MealServiceImpl implements MealService {
             ingredientsAllMealOneDay.addAll(processMealForIngredient(meal));
             nutrientValuesAllMealOneDay.addAll(processMealForNutrient(meal));
         });
-        NutrientValues nutrientValuesSum = new NutrientValues("0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0");
-        nutrientValuesAllMealOneDay.forEach(nutrientValues -> {
-            nutrientValuesSum.setCholine(sumStringUseNumberAlgorithm(nutrientValues.getCholine(),nutrientValuesSum.getCholine()));
-            nutrientValuesSum.setBiotin(sumStringUseNumberAlgorithm(nutrientValues.getBiotin(),nutrientValuesSum.getBiotin()));
-            nutrientValuesSum.setFolate(sumStringUseNumberAlgorithm(nutrientValues.getFolate(),nutrientValuesSum.getFolate()));
-            nutrientValuesSum.setNiacin(sumStringUseNumberAlgorithm(nutrientValues.getNiacin(),nutrientValuesSum.getNiacin()));
-            nutrientValuesSum.setRetinol(sumStringUseNumberAlgorithm(nutrientValues.getBetaCarotene(),nutrientValuesSum.getRetinol()));
-            nutrientValuesSum.setBetaCarotene(sumStringUseNumberAlgorithm(nutrientValues.getBetaCarotene(),nutrientValuesSum.getBetaCarotene()));
-            nutrientValuesSum.setVitaminA(sumStringUseNumberAlgorithm(nutrientValues.getVitaminA(),nutrientValuesSum.getVitaminA()));
-            nutrientValuesSum.setPantothenicAcid(sumStringUseNumberAlgorithm(nutrientValues.getPantothenicAcid(),nutrientValuesSum.getPantothenicAcid()));
-            nutrientValuesSum.setVitaminC(sumStringUseNumberAlgorithm(nutrientValues.getVitaminC(),nutrientValuesSum.getVitaminC()));
-            nutrientValuesSum.setVitaminB1(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB1(),nutrientValuesSum.getVitaminB1()));
-            nutrientValuesSum.setVitaminB2(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB2(),nutrientValuesSum.getVitaminB2()));
-            nutrientValuesSum.setVitaminB6(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB6(),nutrientValuesSum.getVitaminB6()));
-            nutrientValuesSum.setVitaminB12(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB12(),nutrientValuesSum.getVitaminB12()));
-            nutrientValuesSum.setVitaminD(sumStringUseNumberAlgorithm(nutrientValues.getVitaminD(),nutrientValuesSum.getVitaminD()));
-            nutrientValuesSum.setVitaminE(sumStringUseNumberAlgorithm(nutrientValues.getVitaminK(),nutrientValuesSum.getVitaminK()));
-            nutrientValuesSum.setVitaminK(sumStringUseNumberAlgorithm(nutrientValues.getVitaminE(),nutrientValuesSum.getVitaminE()));
-        });
+        NutrientValues nutrientValuesSum = addAllMealNutrientValues(nutrientValuesAllMealOneDay);
+        Ingredient ingredientSum = addAllMealIngredient(ingredientsAllMealOneDay);
+        return new IngredientAndNutrientyDTO(ingredientSum,nutrientValuesSum);
+    }
+
+    private Ingredient addAllMealIngredient(List<Ingredient> ingredientsAll){
         Ingredient ingredientnSum = new
                 Ingredient("0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
-        ingredientsAllMealOneDay.forEach(ingredient -> {
+        ingredientsAll.forEach(ingredient -> {
             ingredientnSum.setCalories(sumStringUseNumberAlgorithm(ingredient.getCalories(), ingredientnSum.getCalories()));
             ingredientnSum.setProtein(sumStringUseNumberAlgorithm(ingredient.getProtein(), ingredientnSum.getProtein()));
             ingredientnSum.setFat(sumStringUseNumberAlgorithm(ingredient.getFat(), ingredientnSum.getFat()));
@@ -82,7 +74,32 @@ public class MealServiceImpl implements MealService {
             ingredientnSum.setPurine(sumStringUseNumberAlgorithm(ingredient.getPurine(), ingredientnSum.getPurine()));
             ingredientnSum.setAsh(sumStringUseNumberAlgorithm(ingredient.getAsh(), ingredientnSum.getAsh()));
         });
-        return new IngredientAndNutrientyDTO(ingredientnSum,nutrientValuesSum);
+        return ingredientnSum;
+
+    }
+
+    private NutrientValues addAllMealNutrientValues(List<NutrientValues> nutrientValuesAll){
+        NutrientValues nutrientValuesSum = new NutrientValues("0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0");
+        nutrientValuesAll.forEach(nutrientValues -> {
+            nutrientValuesSum.setCholine(sumStringUseNumberAlgorithm(nutrientValues.getCholine(),nutrientValuesSum.getCholine()));
+            nutrientValuesSum.setBiotin(sumStringUseNumberAlgorithm(nutrientValues.getBiotin(),nutrientValuesSum.getBiotin()));
+            nutrientValuesSum.setFolate(sumStringUseNumberAlgorithm(nutrientValues.getFolate(),nutrientValuesSum.getFolate()));
+            nutrientValuesSum.setNiacin(sumStringUseNumberAlgorithm(nutrientValues.getNiacin(),nutrientValuesSum.getNiacin()));
+            nutrientValuesSum.setRetinol(sumStringUseNumberAlgorithm(nutrientValues.getBetaCarotene(),nutrientValuesSum.getRetinol()));
+            nutrientValuesSum.setBetaCarotene(sumStringUseNumberAlgorithm(nutrientValues.getBetaCarotene(),nutrientValuesSum.getBetaCarotene()));
+            nutrientValuesSum.setVitaminA(sumStringUseNumberAlgorithm(nutrientValues.getVitaminA(),nutrientValuesSum.getVitaminA()));
+            nutrientValuesSum.setPantothenicAcid(sumStringUseNumberAlgorithm(nutrientValues.getPantothenicAcid(),nutrientValuesSum.getPantothenicAcid()));
+            nutrientValuesSum.setVitaminC(sumStringUseNumberAlgorithm(nutrientValues.getVitaminC(),nutrientValuesSum.getVitaminC()));
+            nutrientValuesSum.setVitaminB1(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB1(),nutrientValuesSum.getVitaminB1()));
+            nutrientValuesSum.setVitaminB2(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB2(),nutrientValuesSum.getVitaminB2()));
+            nutrientValuesSum.setVitaminB6(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB6(),nutrientValuesSum.getVitaminB6()));
+            nutrientValuesSum.setVitaminB12(sumStringUseNumberAlgorithm(nutrientValues.getVitaminB12(),nutrientValuesSum.getVitaminB12()));
+            nutrientValuesSum.setVitaminD(sumStringUseNumberAlgorithm(nutrientValues.getVitaminD(),nutrientValuesSum.getVitaminD()));
+            nutrientValuesSum.setVitaminE(sumStringUseNumberAlgorithm(nutrientValues.getVitaminK(),nutrientValuesSum.getVitaminK()));
+            nutrientValuesSum.setVitaminK(sumStringUseNumberAlgorithm(nutrientValues.getVitaminE(),nutrientValuesSum.getVitaminE()));
+        });
+        return nutrientValuesSum;
+
     }
 
     @Override

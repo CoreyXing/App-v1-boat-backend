@@ -5,11 +5,12 @@ import com.ecust.appv1boatbackend.Exception.LoginFailedException;
 import com.ecust.appv1boatbackend.model.pojo.User;
 import com.ecust.appv1boatbackend.service.UserLoginService;
 import com.ecust.appv1boatbackend.utils.ThreadLocalUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Component
 public class UserInfoInterceptor implements HandlerInterceptor {
